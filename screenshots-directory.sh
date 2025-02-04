@@ -1,7 +1,9 @@
 #!/bin/sh
 
+dir="$HOME/Pictures/screenshots"
+
 set -eux
 
-mkdir -vp ~/Desktop/screenshots
+mkdir -vp "$dir"
 
-defaults write com.apple.screencapture location ~/Desktop/screenshots
+defaults write com.apple.screencapture location "$dir"
