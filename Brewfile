@@ -1,8 +1,5 @@
 tap "bats-core/bats-core"
 tap "hashicorp/tap"
-tap "homebrew/bundle"
-tap "homebrew/command-not-found"
-tap "homebrew/services"
 
 brew "aws-cdk"
 brew "awscli"
