@@ -1,0 +1,9 @@
+#!/bin/sh
+
+set -eux
+
+fastfetch
+
+system_profiler SPHardwareDataType
+
+ifconfig en0
