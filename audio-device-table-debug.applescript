@@ -3,11 +3,22 @@
 
 tell application "Audio MIDI Setup" to activate
 tell application "System Events"
+    set waited to 0
+    repeat until (exists process "Audio MIDI Setup") or waited > 10
+        delay 0.2
+        set waited to waited + 0.2
+    end repeat
+    if not (exists process "Audio MIDI Setup") then return "Error: Audio MIDI Setup process never appeared."
+end tell
+tell application "System Events"
     tell process "Audio MIDI Setup"
-        repeat until exists window "Audio Devices"
+        set waited to 0
+        repeat until (exists window 1) or waited > 10
             delay 0.2
+            set waited to waited + 0.2
         end repeat
-        set mainWindow to window "Audio Devices"
+        if not (exists window 1) then return "Error: Audio MIDI Setup window never appeared."
+        set mainWindow to window 1
 
         -- Select the multi-output device first
         set sidebarRows to every row of outline 1 of scroll area 1 of splitter group 1 of mainWindow

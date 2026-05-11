@@ -15,14 +15,36 @@ tell application "Audio MIDI Setup"
     activate
 end tell
 
+-- On macOS Tahoe, the main window's name follows the currently selected device
+-- (e.g. "Multi (CalDigit + BlackHole)") rather than being a static "Audio
+-- Devices". Look up by index, not name. Bound the waits so a surprise can't
+-- beachball the applet forever.
+tell application "System Events"
+    set waited to 0
+    repeat until (exists process "Audio MIDI Setup") or waited > 10
+        delay 0.2
+        set waited to waited + 0.2
+    end repeat
+    if not (exists process "Audio MIDI Setup") then
+        log "Error: Audio MIDI Setup process never appeared."
+        return
+    end if
+end tell
+
 tell application "System Events"
     tell process "Audio MIDI Setup"
         log "--- Starting Audio Repair ---"
 
-        repeat until exists window "Audio Devices"
+        set waited to 0
+        repeat until (exists window 1) or waited > 10
             delay 0.2
+            set waited to waited + 0.2
         end repeat
-        set mainWindow to window "Audio Devices"
+        if not (exists window 1) then
+            log "Error: Audio MIDI Setup window never appeared."
+            return
+        end if
+        set mainWindow to window 1
 
         -- 1. Locate and select the Multi-Output device in the sidebar
         set multiOutputName to "Multi (CalDigit + BlackHole)"
