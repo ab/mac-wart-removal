@@ -12,6 +12,19 @@ set_hotkey() {
     menu_item="$2"
     hotkey="$3"
 
+    local current
+    current=$(defaults export "$app" - | python3 -c "
+import sys, plistlib
+prefs = plistlib.loads(sys.stdin.buffer.read())
+print(prefs.get('NSUserKeyEquivalents', {}).get(sys.argv[1], ''))
+" "$menu_item")
+
+    if [[ "$current" == "$hotkey" ]]; then
+        echo "Hotkey for '$menu_item' already set to '$hotkey'."
+        echo 'Nothing to do.'
+        return
+    fi
+
     cat <<EOM
 --------------------------------------------------
 Configuring keyboard shortcut:
@@ -50,13 +63,14 @@ add_to_custom_menu_apps() {
     run defaults write "$ua_domain" "$ua_key" -array-add "$app"
 }
 
-echo "Setting Chrome hotkey for Task Manager to ⌘ Cmd + Esc"
+echo "Setting Chrome hotkey for Task Manager to ^ Ctrl + ⇧ Shift + ⎋ Esc"
 echo
 
 app=com.google.Chrome
 
 add_to_custom_menu_apps "$app"
 
-# @ = ⌘ Command (Cmd)
+# ^ = ^ Control (Ctrl)
+# $ = ⇧ Shift
 # ⎋ = Escape (Esc)
-set_hotkey "$app" 'Task Manager' '@⎋'
+set_hotkey "$app" 'Task Manager' '^$⎋'
